@@ -42,7 +42,7 @@
    padding: 40px;
    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
    margin-top: 40px;
-   text-align: left;
+   text-align: center;
   }
 
   .content h2 {
@@ -85,6 +85,35 @@
    color: #888;
   }
 
+  .language-selection {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .language-box {
+   text-decoration: none;
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .language-box:hover {
+    background-color: #388E3C;
+    transform: scale(1.05);
+  }
+
  </style>
 </head>
 <body>
@@ -106,6 +135,15 @@
   <div class="buttons">
    <a href="./pages/duolingo.html">Jetzt spielen</a>
   </div>
+
+  <div class="language-selection">
+    <a class="language-box" href="./pages/duolingo-englisch.html">Englisch</a>
+    <a class="language-box" href="./pages/duolingo-spanisch.html">Spanisch</a>
+    <a class="language-box" href="./pages/duolingo-franzosisch.html">Französisch</a>
+    <a class="language-box" href="./pages/duolingo-polnisch.html">Polnisch</a>
+    <a class="language-box" href="./pages/duolingo-russisch.html">Russisch</a>
+  </div>
+
  </div>
 
  <div class="footer">
