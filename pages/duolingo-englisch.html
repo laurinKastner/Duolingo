@@ -274,7 +274,6 @@
     document.getElementById('xpDisplay').textContent = xp;
 
     const level1Words = [
-      
       { word: "dumm", translation: "stupid" },
       { word: "Idiot", translation: "idiot" },
       { word: "Trottel", translation: "jerk" },
@@ -283,7 +282,7 @@
     ];
 
     const level2Words = [
-    { word: "Schlampe", translation: "bitch" },
+      { word: "Schlampe", translation: "bitch" },
       { word: "Huhre", translation: "hoe" },
       { word: "Fotze", translation: "cunt" },
       { word: "lutscher", translation: "sucker" },
@@ -338,6 +337,13 @@
         feedbackMessage.textContent = "Leider falsch. Versuche es noch einmal.";
         feedbackMessage.classList.remove("correct");
         feedbackMessage.classList.add("incorrect");
+
+        // Lösung klein anzeigen
+        const solutionMessage = document.createElement("p");
+        solutionMessage.textContent = "Die richtige Antwort ist: " + correctAnswer;
+        solutionMessage.style.fontSize = "14px";  // Kleinere Schriftgröße
+        solutionMessage.style.color = "#888";  // Helle Farbe für die Lösung
+        feedbackMessage.appendChild(solutionMessage);  // Füge die Lösung unter der Fehlermeldung hinzu
       }
 
       // Bei 5 richtigen Antworten Level-Up durchführen

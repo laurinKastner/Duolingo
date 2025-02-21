@@ -268,12 +268,13 @@
     <button onclick="closePopup()">Fortfahren</button>
   </div>
 
+  
   <script>
-    // XP aus dem LocalStorage laden oder auf 0 setzen, wenn noch nicht vorhanden
-    let xp = localStorage.getItem('xp') ? parseInt(localStorage.getItem('xp')) : 0;
-    document.getElementById('xpDisplay').textContent = xp;
+   // XP aus dem LocalStorage laden oder auf 0 setzen, wenn noch nicht vorhanden
+   let xp = localStorage.getItem('xp') ? parseInt(localStorage.getItem('xp')) : 0;
+   document.getElementById('xpDisplay').textContent = xp;
 
-    const level1Words = [
+   const level1Words = [
       { word: "Huhrensohn", translation: "fils de pute" },
       { word: "Fotze", translation: "con" },
       { word: "Missgeburt", translation: "enfant mal" },
@@ -297,125 +298,132 @@
       { word: "Erfahrung", translation: "experience" }
     ];
 
-    let currentLevel = 1;
-    let currentIndex = 0;
-    let attempts = 0;
-    let correctAnswers = 0;
-    let currentWords = level1Words;
-    let startTime = Date.now();
+   let currentLevel = 1;
+   let currentIndex = 0;
+   let attempts = 0;
+   let correctAnswers = 0;
+   let currentWords = level1Words;
+   let startTime = Date.now();
 
-    function saveXP() {
-      localStorage.setItem('xp', xp);
-      document.getElementById('xpDisplay').textContent = xp;
-    }
+   function saveXP() {
+     localStorage.setItem('xp', xp);
+     document.getElementById('xpDisplay').textContent = xp;
+   }
 
-    function skipWord() { 
-      if (xp >= 50) {
-        xp -= 50;
-        saveXP();
-        nextWord();
-      }
-    }
+   function skipWord() { 
+     if (xp >= 50) {
+       xp -= 50;
+       saveXP();
+       nextWord();
+     }
+   }
 
-    function checkAnswer() {
-      const userInput = document.getElementById('translationInput').value.trim().toLowerCase();
-      const correctAnswer = currentWords[currentIndex].translation;
-      const feedbackMessage = document.getElementById('feedbackMessage');
+   function checkAnswer() {
+     const userInput = document.getElementById('translationInput').value.trim().toLowerCase();
+     const correctAnswer = currentWords[currentIndex].translation;
+     const feedbackMessage = document.getElementById('feedbackMessage');
 
-      attempts++;
+     attempts++;
 
-      if (userInput === correctAnswer) {
-        correctAnswers++;
-        feedbackMessage.textContent = "Richtig! Gut gemacht.";
-        feedbackMessage.classList.remove("incorrect");
-        feedbackMessage.classList.add("correct");
+     if (userInput === correctAnswer) {
+       correctAnswers++;
+       feedbackMessage.textContent = "Richtig! Gut gemacht.";
+       feedbackMessage.classList.remove("incorrect");
+       feedbackMessage.classList.add("correct");
 
-        // Fortschrittsanzeige aktualisieren
-        updateProgressBar();
-        nextWord();
-      } else {
-        feedbackMessage.textContent = "Leider falsch. Versuche es noch einmal.";
-        feedbackMessage.classList.remove("correct");
-        feedbackMessage.classList.add("incorrect");
-      }
+       // Fortschrittsanzeige aktualisieren
+       updateProgressBar();
+       nextWord();
+     } else {
+       feedbackMessage.textContent = "Leider falsch. Versuche es noch einmal.";
+       feedbackMessage.classList.remove("correct");
+       feedbackMessage.classList.add("incorrect");
 
-      // Bei 5 richtigen Antworten Level-Up durchführen
-      if (correctAnswers === 5) {
-        let timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-        let errorPercentage = (((attempts - correctAnswers) / attempts) * 100).toFixed(2);
-        xp += 10;
-        saveXP();
+       // Lösung klein anzeigen
+       const solutionMessage = document.createElement("p");
+       solutionMessage.textContent = "Die richtige Antwort ist: " + correctAnswer;
+       solutionMessage.style.fontSize = "14px";  // Kleinere Schriftgröße
+       solutionMessage.style.color = "#888";  // Helle Farbe für die Lösung
+       feedbackMessage.appendChild(solutionMessage);  // Füge die Lösung unter der Fehlermeldung hinzu
+     }
 
-        // Pop-up anzeigen
-        showPopup(timeTaken, correctAnswers, errorPercentage);
+     // Bei 5 richtigen Antworten Level-Up durchführen
+     if (correctAnswers === 5) {
+       let timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
+       let errorPercentage = (((attempts - correctAnswers) / attempts) * 100).toFixed(2);
+       xp += 10;
+       saveXP();
 
-        correctAnswers = 0;
-        attempts = 0;
-        startTime = Date.now();
-        currentLevel++;
+       // Pop-up anzeigen
+       showPopup(timeTaken, correctAnswers, errorPercentage);
 
-        if (currentLevel === 2) {
-          currentWords = level2Words;
-        } else if (currentLevel === 3) {
-          currentWords = level3Words;
-        } else {
-          showPopup("Du hast das höchste Level erreicht!");
-        }
+       correctAnswers = 0;
+       attempts = 0;
+       startTime = Date.now();
+       currentLevel++;
 
-        resetProgressBar();
-      }
-    }
+       if (currentLevel === 2) {
+         currentWords = level2Words;
+       } else if (currentLevel === 3) {
+         currentWords = level3Words;
+       } else {
+         showPopup("Du hast das höchste Level erreicht!");
+       }
 
-    function nextWord() {
-      currentIndex++;
-      if (currentIndex >= currentWords.length) {
-        currentIndex = 0;
-      }
-      loadWord();
-    }
+       resetProgressBar();
+     }
+   }
 
-    function loadWord() {
-      const wordElement = document.getElementById('wordToTranslate');
-      wordElement.textContent = currentWords[currentIndex].word;
-      document.getElementById('translationInput').value = '';
-      document.getElementById('feedbackMessage').textContent = '';
+   function nextWord() {
+     currentIndex++;
+     if (currentIndex >= currentWords.length) {
+       currentIndex = 0;
+     }
+     loadWord();
+   }
 
-      document.getElementById('skipButton').disabled = xp < 50;
-    }
+   function loadWord() {
+     const wordElement = document.getElementById('wordToTranslate');
+     wordElement.textContent = currentWords[currentIndex].word;
+     document.getElementById('translationInput').value = '';
+     document.getElementById('feedbackMessage').textContent = '';
 
-    function updateProgressBar() {
-      const progressBar = document.getElementById('progressBar');
-      const progress = ((currentIndex + 1) / currentWords.length) * 100;
-      progressBar.style.width = `${progress}%`;
-    }
+     document.getElementById('skipButton').disabled = xp < 50;
+   }
 
-    function resetProgressBar() {
-      const progressBar = document.getElementById('progressBar');
-      progressBar.style.width = '0%';
-    }
+   function updateProgressBar() {
+     const progressBar = document.getElementById('progressBar');
+     const progress = ((currentIndex + 1) / currentWords.length) * 100;
+     progressBar.style.width = `${progress}%`;
+   }
 
-    function showPopup(timeTaken, correctAnswers, errorPercentage) {
-      document.getElementById('timeTaken').textContent = timeTaken;
-      document.getElementById('correctAnswersCount').textContent = correctAnswers;
-      document.getElementById('errorPercentage').textContent = errorPercentage;
+   function resetProgressBar() {
+     const progressBar = document.getElementById('progressBar');
+     progressBar.style.width = '0%';
+   }
 
-      document.getElementById('overlay').style.display = 'block';
-      document.getElementById('popup').style.display = 'block';
-    }
+   function showPopup(timeTaken, correctAnswers, errorPercentage) {
+     document.getElementById('timeTaken').textContent = timeTaken;
+     document.getElementById('correctAnswersCount').textContent = correctAnswers;
+     document.getElementById('errorPercentage').textContent = errorPercentage;
 
-    function closePopup() {
-      document.getElementById('overlay').style.display = 'none';
-      document.getElementById('popup').style.display = 'none';
-      loadWord();
-    }
+     document.getElementById('overlay').style.display = 'block';
+     document.getElementById('popup').style.display = 'block';
+   }
 
-    document.getElementById('translationInput').addEventListener('keypress', function (event) {
-      if (event.key === 'Enter') {
-        checkAnswer();
-      }
-    });
+   function closePopup() {
+     document.getElementById('overlay').style.display = 'none';
+     document.getElementById('popup').style.display = 'none';
+     loadWord();
+   }
 
-    loadWord(); // Erstes Wort laden
-  </script>
+   document.getElementById('translationInput').addEventListener('keypress', function (event) {
+     if (event.key === 'Enter') {
+       checkAnswer();
+     }
+   });
+
+   loadWord(); // Erstes Wort laden
+ </script>
 </body>
 </html>
