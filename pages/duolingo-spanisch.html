@@ -110,6 +110,23 @@
       color: #f44336;
     }
 
+    #languageToggleButton {
+      padding: 12px 25px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: 2%;
+    }
+
+    #languageToggleButton:hover {
+      background-color: #388E3C;
+      transform: scale(1.05);
+    }
+
     .content .buttons {
       margin-top: 25px;
       display: flex;
@@ -212,9 +229,52 @@
         opacity: 1;
       }
     }
+
+    #languageToggleButtonContainer {
+      display: flex;
+      justify-content: center;
+      margin-top: 2%;
+    }
+
+
+
+    nav {
+      margin-top: 20px;
+      text-align: center;
+      padding-bottom: 6%;
+
+    }
+
+
+    .nav-item{
+      padding: 12px 25px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+    }
+
+    .imges{
+      width: 35px;
+     
+    }
+
   </style>
 </head>
 <body>
+
+
+  <nav>
+   <!-- <a class="nav-item"   href="./../index.html">Zurück zur Startseite</a>-->
+    <a href="./../index.html"> <img class="imges" src="./../home.png" alt=""> </a>
+
+  </nav>
+
+
   <header>
     <div class="logo">
       <h1>Spanisch</h1>
@@ -243,8 +303,24 @@
     <div class="buttons">
       <button onclick="checkAnswer()">ÜBERPRÜFEN</button>
       <button id="skipButton" onclick="skipWord()" disabled>
-        Wort überspringen (50 XP)
+        Wort überspringen (20 XP)
       </button>
+    </div>
+
+
+  
+      <button onclick="testSkip()"  > 
+        skip
+      </button>
+
+
+      <div class="buttons">
+      <button onclick="toggleDarkMode()">Darkmode</button>
+    </div>
+
+
+    <div id="languageToggleButtonContainer">
+      <button id="languageToggleButton" onclick="toggleLanguage()">Wechsel zu Spanisch</button>
     </div>
   </div>
 
@@ -252,7 +328,7 @@
   <div class="popup" id="popup">
     <h3>Level Up!</h3>
     <div class="popup-info">
-      <div class="info-box">
+      <div class="info-box"> 
         <strong>Zeit benötigt:</strong>
         <span id="timeTaken"></span> Sekunden
       </div>
@@ -265,163 +341,234 @@
         <span id="errorPercentage"></span> %
       </div>
     </div>
-    <button onclick="closePopup()">Fortfahren</button>
+    <button onclick="closePopup()">nächtes Level</button>
   </div>
 
   <script>
-   // XP aus dem LocalStorage laden oder auf 0 setzen, wenn noch nicht vorhanden
-   let xp = localStorage.getItem('xp') ? parseInt(localStorage.getItem('xp')) : 0;
-   document.getElementById('xpDisplay').textContent = xp;
-   const level1Words = [
-      { word: "Blödmann", translation: "tonto" },
-      { word: "Idiot", translation: "boludo" },
-      { word: "Arschloch", translation: "cabrón" },
-      { word: "Dummkopf", translation: "pendejo" },
-      { word: "Feigling", translation: "cobarde" }
+
+
+
+if (darkmode){
+
+}
+//DARKMODE
+function toggleDarkMode() {
+  let darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
+
+  if (darkModeEnabled) {
+    // Wechsel zu Lightmode
+    document.body.style.backgroundColor = "#f0f4f8";
+    document.body.style.color = "#333";
+    document.querySelectorAll('.content, .popup, header').forEach(element => {
+      element.style.backgroundColor = "white";
+      element.style.color = "#333";
+    });
+    document.querySelectorAll('button, header').forEach(button => {
+      button.style.backgroundColor = "#4CAF50";
+      button.style.color = "white";
+    });
+
+    localStorage.setItem('darkMode', 'disabled');
+  } else {
+    // Wechsel zu Darkmode
+    document.body.style.backgroundColor = "#333";
+    document.body.style.color = "#f0f4f8";
+    document.querySelectorAll('.content, .popup, header').forEach(element => {
+      element.style.backgroundColor = "#444";
+      element.style.color = "#f0f4f8";
+    });
+    document.querySelectorAll('button').forEach(button => {
+      button.style.backgroundColor = "#555";
+      button.style.color = "#f0f4f8";
+    });
+
+    localStorage.setItem('darkMode', 'enabled');
+  }
+}
+
+// Darkmode beim Laden der Seite aktivieren, falls er gespeichert ist
+document.addEventListener("DOMContentLoaded", () => {
+  if (localStorage.getItem('darkMode') === 'enabled') {
+    toggleDarkMode();
+  }
+});
+//DARKMODE
+
+
+
+    let xp = localStorage.getItem('xp') ? parseInt(localStorage.getItem('xp')) :9999;
+    document.getElementById('xpDisplay').textContent = xp;
+    const germanToSpanishWords = [
+      { word: "Hund", translation: "perro" },
+      { word: "Katze", translation: "gato" },
+      { word: "Haus", translation: "casa" },
+      { word: "Auto", translation: "coche" },
+      { word: "Stadt", translation: "ciudad" }
     ];
 
-    const level2Words = [
-      { word: "Heuchler", translation: "fariseo" },
-      { word: "Trottel", translation: "huevón" },
-      { word: "Wiederling", translation: "asqueroso" },
-      { word: "Huhrensohn", translation: "Hijo de puta" },
-      { word: "Bastard", translation: "bastardo" }
+    const spanishToGermanWords = [
+      { word: "perro", translation: "Hund" },
+      { word: "gato", translation: "Katze" },
+      { word: "casa", translation: "Haus" },
+      { word: "coche", translation: "Auto" },
+      { word: "ciudad", translation: "Stadt" }
     ];
 
-    const level3Words = [
-      { word: "Wissenschaft", translation: "science" },
-      { word: "Verantwortung", translation: "responsibility" },
-      { word: "Krankenhaus", translation: "hospital" },
-      { word: "Universität", translation: "university" },
-      { word: "Erfahrung", translation: "experience" }
-    ];
+    let currentLevel = 1;
+    let currentIndex = 0;
+    let attempts = 0;
+    let correctAnswers = 0;
+    let currentWords = germanToSpanishWords;
+    let isGermanToSpanish = true;
+    let startTime = Date.now();
 
-   let currentLevel = 1;
-   let currentIndex = 0;
-   let attempts = 0;
-   let correctAnswers = 0;
-   let currentWords = level1Words;
-   let startTime = Date.now();
+    function saveXP() {
+      localStorage.setItem('xp', xp);
+      document.getElementById('xpDisplay').textContent = xp;
+    }
 
-   function saveXP() {
-     localStorage.setItem('xp', xp);
-     document.getElementById('xpDisplay').textContent = xp;
-   }
+    function skipWord() { 
+      if (xp >= 20) {
+        xp -= 20;
+        saveXP();
+        nextWord();
+      }
+    }
 
-   function skipWord() { 
-     if (xp >= 50) {
-       xp -= 50;
-       saveXP();
-       nextWord();
-     }
-   }
+    function testSkip(){
+      nextWord();
+      saveXP();
+      updateProgressBar();
+    
+      
+    }
 
-   function checkAnswer() {
-     const userInput = document.getElementById('translationInput').value.trim().toLowerCase();
-     const correctAnswer = currentWords[currentIndex].translation;
-     const feedbackMessage = document.getElementById('feedbackMessage');
+    function checkAnswer() {
+      const userInput = document.getElementById('translationInput').value.trim().toLowerCase();
+      const correctAnswer = currentWords[currentIndex].translation;
+      const feedbackMessage = document.getElementById('feedbackMessage');
 
-     attempts++;
+      attempts++;
 
-     if (userInput === correctAnswer) {
-       correctAnswers++;
-       feedbackMessage.textContent = "Richtig! Gut gemacht.";
-       feedbackMessage.classList.remove("incorrect");
-       feedbackMessage.classList.add("correct");
+      if (userInput === correctAnswer) {
+        correctAnswers++;
+        feedbackMessage.textContent = "Richtig! Gut gemacht.";
+        feedbackMessage.classList.remove("incorrect");
+        feedbackMessage.classList.add("correct");
 
-       // Fortschrittsanzeige aktualisieren
-       updateProgressBar();
-       nextWord();
-     } else {
-       feedbackMessage.textContent = "Leider falsch. Versuche es noch einmal.";
-       feedbackMessage.classList.remove("correct");
-       feedbackMessage.classList.add("incorrect");
+        updateProgressBar();
+        nextWord();
+      } else {
+        feedbackMessage.textContent = "Leider falsch. Versuche es noch einmal.";
+        feedbackMessage.classList.remove("correct");
+        feedbackMessage.classList.add("incorrect");
 
-       // Lösung klein anzeigen
-       const solutionMessage = document.createElement("p");
-       solutionMessage.textContent = "Die richtige Antwort ist: " + correctAnswer;
-       solutionMessage.style.fontSize = "14px";  // Kleinere Schriftgröße
-       solutionMessage.style.color = "#888";  // Helle Farbe für die Lösung
-       feedbackMessage.appendChild(solutionMessage);  // Füge die Lösung unter der Fehlermeldung hinzu
-     }
+        const solutionMessage = document.createElement("p");
+        solutionMessage.textContent = "Die richtige Antwort ist: " + correctAnswer;
+        solutionMessage.style.fontSize = "14px";
+        solutionMessage.style.color = "#888";
+        feedbackMessage.appendChild(solutionMessage);
+      }
 
-     // Bei 5 richtigen Antworten Level-Up durchführen
-     if (correctAnswers === 5) {
-       let timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
-       let errorPercentage = (((attempts - correctAnswers) / attempts) * 100).toFixed(2);
-       xp += 10;
-       saveXP();
+      if (correctAnswers === 5) {
+        let timeTaken = ((Date.now() - startTime) / 1000).toFixed(2);
+        let errorPercentage = (((attempts - correctAnswers) / attempts) * 100).toFixed(2);
+        xp += 10;
+        saveXP();
+        showPopup(timeTaken, correctAnswers, errorPercentage);
 
-       // Pop-up anzeigen
-       showPopup(timeTaken, correctAnswers, errorPercentage);
+        correctAnswers = 0;
+        attempts = 0;
+        startTime = Date.now();
+        currentLevel++;
+        resetProgressBar();
+      }
+    }
 
-       correctAnswers = 0;
-       attempts = 0;
-       startTime = Date.now();
-       currentLevel++;
+    function nextWord() {
+      currentIndex++;
+      if (currentIndex >= currentWords.length) {
+        currentIndex = 0;
+      }
+      loadWord();
+    }
 
-       if (currentLevel === 2) {
-         currentWords = level2Words;
-       } else if (currentLevel === 3) {
-         currentWords = level3Words;
-       } else {
-         showPopup("Du hast das höchste Level erreicht!");
-       }
+    function loadWord() {
+      const wordElement = document.getElementById('wordToTranslate');
+      wordElement.textContent = currentWords[currentIndex].word;
+      document.getElementById('translationInput').value = '';
+      document.getElementById('feedbackMessage').textContent = '';
 
-       resetProgressBar();
-     }
-   }
+      document.getElementById('skipButton').disabled = xp < 50;
+    }
 
-   function nextWord() {
-     currentIndex++;
-     if (currentIndex >= currentWords.length) {
-       currentIndex = 0;
-     }
-     loadWord();
-   }
+    function updateProgressBar() {
+      const progressBar = document.getElementById('progressBar');
+      const progress = ((currentIndex + 1) / currentWords.length) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
 
-   function loadWord() {
-     const wordElement = document.getElementById('wordToTranslate');
-     wordElement.textContent = currentWords[currentIndex].word;
-     document.getElementById('translationInput').value = '';
-     document.getElementById('feedbackMessage').textContent = '';
+    function resetProgressBar() {
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = '0%';
+    }
 
-     document.getElementById('skipButton').disabled = xp < 50;
-   }
+    function showPopup(timeTaken, correctAnswers, errorPercentage) {
+      document.getElementById('timeTaken').textContent = timeTaken;
+      document.getElementById('correctAnswersCount').textContent = correctAnswers;
+      document.getElementById('errorPercentage').textContent = errorPercentage;
 
-   function updateProgressBar() {
-     const progressBar = document.getElementById('progressBar');
-     const progress = ((currentIndex + 1) / currentWords.length) * 100;
-     progressBar.style.width = `${progress}%`;
-   }
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('popup').style.display = 'block';
+    }
 
-   function resetProgressBar() {
-     const progressBar = document.getElementById('progressBar');
-     progressBar.style.width = '0%';
-   }
+    function closePopup() {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('popup').style.display = 'none';
+      loadWord();
+    }
 
-   function showPopup(timeTaken, correctAnswers, errorPercentage) {
-     document.getElementById('timeTaken').textContent = timeTaken;
-     document.getElementById('correctAnswersCount').textContent = correctAnswers;
-     document.getElementById('errorPercentage').textContent = errorPercentage;
+    function toggleLanguage() {
+      isGermanToSpanish = !isGermanToSpanish;
+      currentWords = isGermanToSpanish ? germanToSpanishWords : spanishToGermanWords;
 
-     document.getElementById('overlay').style.display = 'block';
-     document.getElementById('popup').style.display = 'block';
-   }
+      document.getElementById('languageToggleButton').textContent = isGermanToSpanish ? 'Wechsel zu Spanisch' : 'Wechsel zu Deutsch';
 
-   function closePopup() {
-     document.getElementById('overlay').style.display = 'none';
-     document.getElementById('popup').style.display = 'none';
-     loadWord();
-   }
+      currentIndex = 0;
+      loadWord();
+    }
 
-   document.getElementById('translationInput').addEventListener('keypress', function (event) {
-     if (event.key === 'Enter') {
-       checkAnswer();
-     }
-   });
 
-   loadWord(); // Erstes Wort laden
- </script>
+    function darkmode() {
+      document.body.style.backgroundColor = "#333";
+      document.body.style.color = "#f0f4f8";
+      document.querySelectorAll('.content, .popup, header').forEach(element => {
+        element.style.backgroundColor = "#444";
+        element.style.color = "#f0f4f8";
+      });
+      document.querySelectorAll('button').forEach(button => {
+        button.style.backgroundColor = "#555";
+        button.style.color = "#f0f4f8";
+      });
+    }
+
+
+
+
+    document.getElementById('translationInput').addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') {
+        checkAnswer();
+      }
+    });
+
+
+    document.getElementById('translationInput').addEventListener('keypress', function (event) {
+      if (event.key === 'Space') {
+        checkAnswer();
+      }
+    });
+
+    loadWord();
+  </script>
 </body>
 </html>
